@@ -156,55 +156,79 @@ function displayExtractedText(text) {
 }
 
 function checkHarmfulIngredients(extractedText) {
+    // Step 1: Clean and preprocess the extracted text
     const cleanedText = extractedText
-        .toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
+        .toLowerCase() // Convert text to lowercase
+        .replace(/[^\w\s]/g, '') // Remove punctuation
+        .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+        .trim(); // Trim leading/trailing spaces
 
+    // Step 2: Split the cleaned text into individual words (ingredients)
     const words = cleanedText.split(' ');
-    const ignoredWords = new Set(['and', 'or', 'with', 'sugar', 'salt', 'water']);
+
+    // Step 3: Filter out common words that are not ingredients
+    const ignoredWords = new Set(['and', 'or', 'with', 'sugar', 'salt', 'water']); // You can expand this list
     const filteredWords = words.filter(word => !ignoredWords.has(word));
 
+    // Step 4: Map of synonyms or alternative names for ingredients
     const synonymMap = {
         'vitamin c': 'ascorbic acid',
         'e300': 'ascorbic acid',
         'e330': 'citric acid',
+        // Add more synonyms or E-number mappings if needed
     };
 
-    const foundDiseases = new Set();
+    const foundDiseases = new Set(); // Use a Set to avoid duplicates
 
+    // Step 5: Check for harmful ingredients in both single words and bigrams (two-word pairs)
     for (let i = 0; i < filteredWords.length; i++) {
         let singleWord = filteredWords[i];
         let bigram = (i < filteredWords.length - 1) ? filteredWords[i] + ' ' + filteredWords[i + 1] : null;
 
+        // Map synonyms or check direct words
         let ingredientSingle = synonymMap[singleWord] || singleWord;
         let ingredientBigram = bigram ? (synonymMap[bigram] || bigram) : null;
 
+        // Check for harmful single words
         if (harmfulIngredientsData[ingredientSingle]) {
             harmfulIngredientsData[ingredientSingle].diseases.forEach(disease => foundDiseases.add(disease));
         }
 
+        // Check for harmful two-word phrases (bigrams)
         if (ingredientBigram && harmfulIngredientsData[ingredientBigram]) {
             harmfulIngredientsData[ingredientBigram].diseases.forEach(disease => foundDiseases.add(disease));
         }
     }
 
+    // Step 6: Display results using SweetAlert with options for "OK" and "Show Risks"
     if (foundDiseases.size > 0) {
         Swal.fire({
-            icon: 'warning',
+            icon: 'error', // Red X mark
             title: 'Harmful ingredients detected!',
-            text: "Potential diseases: " + Array.from(foundDiseases).join(", "),
-            confirmButtonText: 'OK'
+            text: 'Click "Show Risks" to see the potential risks, or "OK" to close.',
+            showCancelButton: true,
+            confirmButtonText: 'Show Risks',
+            cancelButtonText: 'OK',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User clicked on "Show Risks"
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Potential risks identified:',
+                    text: Array.from(foundDiseases).join(', '),
+                    confirmButtonText: 'OK'
+                });
+            }
         });
     } else {
         Swal.fire({
-            icon: 'success',
+            icon: 'success', // Green tick mark
             title: 'No harmful ingredients detected.',
             confirmButtonText: 'OK'
         });
     }
 }
+
 
 function enableEditing() {
     const textarea = document.getElementById('extracted-text');
