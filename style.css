@@ -167,3 +167,26 @@ textarea {
   margin-top: 10px;
   color: #ff6666;
 }
+
+.reload-button {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b); /* Gradient background */
+  color: #fff; /* White text */
+  padding: 10px 20px; /* Padding for size */
+  border: none; /* Remove default border */
+  border-radius: 30px; /* Rounded corners */
+  font-size: 16px; /* Increase font size */
+  font-weight: bold; /* Make text bold */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background 0.3s ease, transform 0.2s ease; /* Smooth transition */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+}
+
+.reload-button:hover {
+  background: linear-gradient(135deg, #ff4b2b, #ff416c); /* Reverse gradient on hover */
+  transform: scale(1.05); /* Slightly larger on hover */
+}
+
+.reload-button:active {
+  transform: scale(0.98); /* Slightly shrink on click */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Reduce shadow on click */
+}
