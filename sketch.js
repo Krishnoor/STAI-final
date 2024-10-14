@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const galleryInput = document.getElementById('gallery-input');
     const homeScreen = document.getElementById('home-screen');
     const scannerScreen = document.getElementById('scanner-screen');
+    const reloadButton = document.getElementById('reload-button');
 
     if (!startButton) {
         console.error("Start Button not found!");
@@ -28,6 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    if (reloadButton) {
+        reloadButton.addEventListener('click', () => {
+            location.reload(); // This will reload the current page
+        });
+    } else {
+        console.error("Reload button not found!");
+    }
+    
 });
 
 let cameraInput;
@@ -249,6 +259,4 @@ function saveChanges() {
 
     checkHarmfulIngredients(editedText);
 }
-
-
 
